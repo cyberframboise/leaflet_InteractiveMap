@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Leaflet Cluster</title>
+    <!-- leaflet css -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!--- markercluster -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css"/>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css"/>
+    
+    
+    <style>
+      body{
+        margin:0;
+        padding:0;
+      }
+      #map{
+        width:100%;
+        height: 100vh;
+      }
+      .legend {
+        padding: 8px;
+        background: white;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+        border-radius: 5px;
+        margin: 20px;
+        z-index: 999;
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 170px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="map"></div>
+  </body>
+  
+</html>
+<!--leaflet js -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+<!-- markerCluster -->
+<script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+<script>
+  //Map initialization
+  const map = L.map('map').setView([48.36577427731659, 11.840287199123532], 5);
+
+  //LAYERS
+  
+  //osm layer
+  //const osm = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+  //maxZoom: 19,
+  //attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  //});
+  //osm.addTo(map);-->
+
+  //Stadia smooth dark layer
+  var Stadia_AlidadeSmoothDark = L.tileLayer('https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.{ext}', {
+	minZoom: 0,
+	maxZoom: 20,
+	attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+	ext: 'png'
+  });
+  Stadia_AlidadeSmoothDark.addTo(map);
+
+  //MARKERS
+  //Icon style
+  const myIcon_Orange = L.icon({
+    iconUrl: 'https://www.pngall.com/wp-content/uploads/2017/05/Map-Marker-Free-Download-PNG.png',
+    iconSize: [40,40],
+    });
+
+  const myIcon_Red= L.icon({
+    iconUrl: 'https://www.pngall.com/wp-content/uploads/2017/05/Map-Marker-PNG-Picture.png',
+    iconSize: [40,40],
+    });
+
+  const myIcon_Academy = L.icon({
+    iconUrl: 'Academy.svg',
+    iconsize: [50, 50],
+  });
+
+ // Marker cluster group
+  const markers = L.markerClusterGroup();
+
+  // List of Academies
+    var academies = [
+    {"Institute": "AGRICOLUS S.r.l.", "Coordinates": "43.1122, 12.388"},
+    {"Institute": "CIRGEO - Interdepartmental Research Center of Geomatics", "Coordinates": "45.4064, 11.877"},
+    {"Institute": "Centre for Climate and Climate Change (CRC), University of Perugia", "Coordinates": "43.1122, 12.388"},
+    {"Institute": "CIMA Research Foundation – Centro Internazionale in Monitoraggio Ambientale", "Coordinates": "44.2989, 8.4522"},
+    {"Institute": "Corpo Italiano di San Lazzaro - CSLI Italia", "Coordinates": "41.7930, 12.4235"},
+    {"Institute": "Fondazione Centro Euro-Mediterraneo sui Cambiamenti Climatici (Fondazione CMCC)", "Coordinates": "40.3515, 18.175"},
+    {"Institute": "GISIG - Geographical Information Systems International Group", "Coordinates": "44.4056, 8.9463"},
+    {"Institute": "IEST – European Institute for Technological Development", "Coordinates": "45.4767, 12.2315"},
+    {"Institute": "ISMEA - Istituto di Servizi per il Mercato Agricolo Alimentare", "Coordinates": "41.9028, 12.496"},
+    {"Institute": "Istituto Universitario di Studi Superiori (IUSS) Pavia", "Coordinates": "45.1869, 9.1555"},
+    {"Institute": "MEEO S.r.l", "Coordinates": "45.4064, 11.877"},
+    {"Institute": "National Institute of Oceanography and Applied Geophysics", "Coordinates": "45.6495, 13.776"},
+    {"Institute": "Planetek Italia SRL", "Coordinates": "41.1171, 16.871"},
+    {"Institute": "Politecnico di Bari", "Coordinates": "41.1171, 16.871"},
+    {"Institute": "Politecnico di Milano", "Coordinates": "45.4642, 9.19"},
+    {"Institute": "Politecnico di Milano – GEOLab", "Coordinates": "45.4642, 9.19"},
+    {"Institute": "Politecnico di Torino", "Coordinates": "45.0703, 7.6869"},
+    {"Institute": "Spacearth Technology S.r.l", "Coordinates": "41.8262, 12.4987"},
+    {"Institute": "STUDIOMAPP S.r.l", "Coordinates": "44.4144, 12.2018"},
+    {"Institute": "TEAMDEV", "Coordinates": "43.0865, 12.3685"},
+    {"Institute": "TeRN – Tecnologie per le Osservazioni della Terra ed i Rischi Naturali", "Coordinates": "40.6076, 15.7211"},
+    {"Institute": "Università degli Studi della Basilicata", "Coordinates": "40.6664, 16.604"},
+    {"Institute": "Università di Bologna – DICAM", "Coordinates": "44.4949, 11.342"},
+    {"Institute": "Università di Bologna – Department of Physics and Astronomy", "Coordinates": "44.4949, 11.342"},
+    {"Institute": "Università della Calabria (UNICAL) – DIMES", "Coordinates": "39.3584, 16.231"},
+    {"Institute": "Università degli Studi di Firenze – Department of Earth Sciences", "Coordinates": "43.7696, 11.255"},
+    {"Institute": "Università degli Studi di Firenze – SAGAS, LabGeo", "Coordinates": "43.7696, 11.255"},
+    {"Institute": "Università degli Studi di Firenze – DAGRI, geoLAB", "Coordinates": "43.7696, 11.255"},
+    {"Institute": "Università Iuav di Venezia", "Coordinates": "45.4379, 12.315"},
+    {"Institute": "Università di Napoli Federico II – CRISP", "Coordinates": "40.8518, 14.268"},
+    {"Institute": "Università degli Studi di Napoli Parthenope", "Coordinates": "40.8359, 14.248"},
+    {"Institute": "Università degli Studi di Milano-Bicocca – UNIMIB-DISAT", "Coordinates": "45.5149, 9.2089"},
+    {"Institute": "Università degli Studi di Padova – CISAS “G.Colombo”", "Coordinates": "45.4064, 11.877"},
+    {"Institute": "Università degli Studi di Pavia – Department of Electrical, Computer, Biomedical Engineering", "Coordinates": "45.1869, 9.1555"},
+    {"Institute": "Università di Pisa – Department of Civil and Industrial Engineering", "Coordinates": "43.7228, 10.401"},
+    {"Institute": "Università Politecnica delle Marche", "Coordinates": "43.6158, 13.518"},
+    {"Institute": "Università di Roma \"La Sapienza\" – CRAS", "Coordinates": "41.9028, 12.496"},
+    {"Institute": "Università di Roma \"La Sapienza\" – C.I.T.E.R.A.", "Coordinates": "41.9028, 12.496"},
+    {"Institute": "Università di Roma \"La Sapienza\" – Geodesy and Geomatic Division (DICEA)", "Coordinates": "41.9028, 12.496"},
+    {"Institute": "Università degli studi di Bari Aldo Moro", "Coordinates": "41.1171, 16.871"},
+    {"Institute": "Università degli Studi \"Roma Tre\" – Dipartimento di Ingegneria", "Coordinates": "41.8919, 12.511"},
+    {"Institute": "Università degli studi di Roma \"Tor vergata\" – Earth Observation Laboratory", "Coordinates": "41.8905, 12.494"},
+    {"Institute": "Università degli Studi di Salerno – Dipartimento di Informatica", "Coordinates": "40.6824, 14.768"},
+    {"Institute": "Università degli studi di Torino – DISAFA", "Coordinates": "45.0703, 7.6869"},
+    {"Institute": "Università Telematica Giustino Fortunato", "Coordinates": "41.1203, 14.8"}
+  ];
+
+  // List of Relays
+  var relays = [
+  {"Institute": "AMFM/GIS Italia", "Coordinates": "41.9028,12.4964"},
+  {"Institute": "Bluefarm S.r.l", "Coordinates": "45.4379,12.3155"},
+  {"Institute": "ENEA – Italian National Agency for New Technologies, Energy and Sustainable Economic Development", "Coordinates": "41.8200,12.6736"},
+  {"Institute": "Fondazione E. Amaldi (former Hypatia Research Consortium)", "Coordinates": "41.9028,12.4964"},
+  {"Institute": "IEST – European Institute for Technological Development", "Coordinates": "45.4767,12.2315"},
+  {"Institute": "InfiniteArea", "Coordinates": "45.7764,12.0378"},
+  {"Institute": "Italian National Copernicus User Forum", "Coordinates": "45.1869,9.1555"},
+  {"Institute": "ITHACA – Information Technology for Humanitarian Assistance, Cooperation and Action", "Coordinates": "45.0703,7.6869"},
+  {"Institute": "LazioConnect", "Coordinates": "41.9028,12.4964"},
+  {"Institute": "Politecnico di Milano – Osservatorio Space Economy", "Coordinates": "45.4642,9.1900"},
+  {"Institute": "TeRN – Tecnologie per le Osservazioni della Terra ed i Rischi Naturali", "Coordinates": "40.6037,15.7275"}
+];
+
+ //PROVA
+ var prove = [
+    {"Institute": "PROVA", "Contact":"Caterina Motta","Email": "catemotta.198@gmail.com", "Link":"https://twitter.com/cyberframboise" ,"Coordinates": "43.813447474575845, 7.764712426329277"}
+  ];
+ 
+// Loop through the ACADEMIES and add markers to the cluster group
+
+for (let i = 0; i < academies.length; i++) {
+  const academy = academies[i];
+  const coordinates = academy.Coordinates.split(',').map(coord => parseFloat(coord.trim()));
+
+  if (!isNaN(coordinates[0]) && !isNaN(coordinates[1])) {
+    const marker = L.marker(coordinates, { icon: myIcon_Orange });
+    marker.bindPopup(academy.Institute);
+    markers.addLayer(marker);
+    console.log(academy.Institute + ": " + coordinates[0] + ", " + coordinates[1]);
+  } else {
+    console.log("Invalid coordinates for " + academy.Institute);
+  }
+}
+
+// Loop through the RELAYS and add markers to the cluster group
+
+for (let i = 0; i < relays.length; i++) {
+  const relay = relays[i];
+  const coordinates = relay.Coordinates.split(',').map(coord => parseFloat(coord.trim()));
+
+  if (!isNaN(coordinates[0]) && !isNaN(coordinates[1])) {
+    const marker = L.marker(coordinates, { icon: myIcon_Red });
+    marker.bindPopup(relay.Institute);
+    markers.addLayer(marker);
+    console.log(relay.Institute + ": " + coordinates[0] + ", " + coordinates[1]);
+  } else {
+    console.log("Invalid coordinates for " + relay.Institute);
+  }
+}
+
+// PROVA --> POP-UP interattivi in un loop 
+
+for (let i = 0; i < prove.length; i++) {
+  const prova = prove[i];
+  const coordinates = prova.Coordinates.split(',').map(coord => parseFloat(coord.trim()));
+
+  if (!isNaN(coordinates[0]) && !isNaN(coordinates[1])) {
+    const popupContent = `
+      <strong>${prova.Institute}</strong><br>
+      Contact: ${prova.Contact}<br>
+      Email: ${prova.Email}<br>
+      <a href="${prova.Link}" target="_blank">Click here for more info</a>
+    `;
+    const marker = L.marker(coordinates, { icon: myIcon_Red });
+    marker.bindPopup(popupContent);
+    markers.addLayer(marker);
+    console.log(prova.Institute + ": " + coordinates[0] + ", " + coordinates[1]);
+  } else {
+    console.log("Invalid coordinates for " + prova.Institute);
+  }
+}
+
+
+// Add the marker cluster group to the map
+map.addLayer(markers);
+
+//Legend
+const legend = L.control({position: 'topright'});
+
+legend.onAdd = function (map) {
+  const div = L.DomUtil.create('div', 'info legend');
+  div.innerHTML += '<img src="Academy.svg" style="width: 20px; height: 20px;"> EU Space Support Office<br>';
+  div.innerHTML += '<img src="https://www.pngall.com/wp-content/uploads/2017/05/Map-Marker-Free-Download-PNG.png" style="width: 20px; height: 20px;">   Copernicus Academies<br>';
+  div.innerHTML += '<img src="https://www.pngall.com/wp-content/uploads/2017/05/Map-Marker-PNG-Picture.png" style="width: 20px; height: 20px;">   Copernicus Relays<br>';
+  return div;
+};
+
+legend.addTo(map);
+
+// Standalone popup for Brussels
+const brusselsCoordinates = [50.81994365613108, 4.356740965039937];
+const brusselsPopupContent = '<strong>EU Space Support Office</strong>'
+const brusselsMarker = L.marker(brusselsCoordinates, {icon: myIcon_Academy}).bindPopup(brusselsPopupContent).addTo(map);
+
+</script>
